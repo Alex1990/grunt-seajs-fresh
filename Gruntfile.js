@@ -30,21 +30,20 @@ module.exports = function(grunt) {
 
     // Configuration to be run (and then tested).
     seajs_fresh: {
-      default_options: {
+      basic: {
         options: {
+          configFile: 'test/fixtures/basic/config.js',
+          base: 'test/fixtures/basic/dest',
+          debug: true
         },
-        files: {
-          'tmp/default_options': ['test/fixtures/testing', 'test/fixtures/123']
-        }
-      },
-      custom_options: {
-        options: {
-          separator: ': ',
-          punctuation: ' !!!'
-        },
-        files: {
-          'tmp/custom_options': ['test/fixtures/testing', 'test/fixtures/123']
-        }
+        files: [
+          {
+            expand: true,
+            cwd: 'test/fixtures/basic/src',
+            src: '**/*.js',
+            dest: 'test/fixtures/basic/dest'
+          }
+        ]
       }
     },
 
@@ -65,7 +64,7 @@ module.exports = function(grunt) {
 
   // Whenever the "test" task is run, first clean the "tmp" dir, then run this
   // plugin's task(s), then test the result.
-  grunt.registerTask('test', ['clean', 'seajs_fresh', 'nodeunit']);
+  grunt.registerTask('test', ['clean', 'seajs_fresh']);
 
   // By default, lint and run all tests.
   grunt.registerTask('default', ['jshint', 'test']);

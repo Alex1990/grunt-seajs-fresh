@@ -23,10 +23,6 @@ var grunt = require('grunt');
 */
 
 exports.seajs_fresh = {
-  setUp: function(done) {
-    // setup here if necessary
-    done();
-  },
   default_options: function(test) {
     test.expect(1);
 
