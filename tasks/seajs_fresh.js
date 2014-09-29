@@ -25,11 +25,20 @@ module.exports = function(grunt) {
   var PATHS_RE = /^([^/:]+)(\/.+)$/;
   var VARS_RE = /{([^{]+)}/g;
 
+  function hasPaths(id, paths) {
+    var m = id.match(PATHS_RE);
+    return paths && m && paths[m[1]];
+  }
+
+  function hasVars(id) {
+    return VARS_RE.test(id);
+  }
+
   function parsePaths(id, paths) {
     var m;
 
     if (paths && (m = id.match(PATHS_RE)) && isString(paths[m[1]])) {
-      id = paths[m[1]] + m[2];
+      id = path.join(paths[m[1]], m[2]);
     }
 
     return id;
@@ -90,8 +99,10 @@ module.exports = function(grunt) {
       throw new Error('the argument options.type isn\'t supported');
     }
 
+    var mapFileName = 'freshmap.json';
+
     // The modified time (and the pathname) of the files are stored in freshmap.json
-    var map = grunt.file.exists('freshmap.json') ? grunt.file.readJSON('freshmap.json') : {};
+    var map = grunt.file.exists(mapFileName) ? grunt.file.readJSON(mapFileName) : {};
 
     var configSrc = grunt.file.read(options.configFile);
     var blocks = configSrc.match(options.blockRe);
@@ -168,19 +179,21 @@ module.exports = function(grunt) {
             return block.replace(options.fileRe, function(m, s1, s2, s3) {
               s2 = s2.indexOf('?') > -1 ? s2.slice(0, s2.indexOf('?')) : s2;
 
-              var ss2 = '';
+              var ss2 = s2;
 
-              if (!VARS_RE.test(s2) && !PATHS_RE.test(s2)) {
-                ss2 = path.join(options.base, s2);
+              if (!hasVars(ss2) && !hasPaths(ss2, options.paths)) {
+                ss2 = path.join(options.base, ss2);
               } else {
-                ss2 = parsePaths(s2, options.paths);
-                ss2 = parseVars(s2, options.vars);
+                ss2 = parsePaths(ss2, options.paths);
+                ss2 = parseVars(ss2, options.vars);
               }
 
               if (f.dest !== ss2 && map[filepath][1] !== ss2) {
                 return m;
               }
-              s2 = s2.slice(0, s2.lastIndexOf('/') + 1) + path.basename(pathname);
+              var idx1 = s2.lastIndexOf('/') + 1;
+              var idx2 = s2.lastIndexOf('}') + 1;
+              s2 = s2.slice(0, idx1 > idx2 ? idx1 : idx2) + path.basename(pathname);
               return s1 + s2 + s3;
             });
           });
@@ -197,13 +210,13 @@ module.exports = function(grunt) {
             return block.replace(options.fileRe, function(m, s1, s2, s3) {
               s2 = s2.indexOf('?') > -1 ? s2.slice(0, s2.indexOf('?')) : s2;
 
-              var ss2 = '';
+              var ss2 = s2;
 
-              if (!VARS_RE.test(s2) && !PATHS_RE.test(s2)) {
-                ss2 = path.join(options.base, s2);
+              if (!hasVars(ss2) && !hasPaths(ss2, options.paths)) {
+                ss2 = path.join(options.base, ss2);
               } else {
-                ss2 = parsePaths(s2, options.paths);
-                ss2 = parseVars(s2, options.vars);
+                ss2 = parsePaths(ss2, options.paths);
+                ss2 = parseVars(ss2, options.vars);
               }
 
               if (filepath !== ss2 && map[filepath][1] !== ss2) {
@@ -229,10 +242,12 @@ module.exports = function(grunt) {
       return blocks[count++];
     });
 
+    // Generate the `options.configFile` file
     grunt.file.write(options.configFile, configSrc);
     grunt.log.writeln('The file "' + options.configFile + '" has been rewritten');
 
-    var freshmapPath = path.join(path.dirname(options.configFile),'freshmap.json');
+    // Generate the `freshmap.json` file
+    var freshmapPath = path.join(path.dirname(options.configFile), mapFileName);
     grunt.file.write(freshmapPath, JSON.stringify(map, null, 2));
     grunt.log.writeln('The file "' + freshmapPath + '" has been generated.');
   });

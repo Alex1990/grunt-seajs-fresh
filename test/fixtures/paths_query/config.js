@@ -2,9 +2,13 @@ seajs.config({
 
     base: 'src',
 
+    paths: {
+        gallery: 'src/libs'
+    },
+
     /*fresh start*/
     alias: {
-        'foo': 'foo.js?v=1411892362238',
+        'foo': 'gallery/foo.js',
         'bar': 'bar.js'
     }
     /*fresh end*/

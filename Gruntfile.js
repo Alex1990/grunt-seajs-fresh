@@ -25,7 +25,31 @@ module.exports = function(grunt) {
 
     // Before generating any new files, remove any previously-created files.
     clean: {
-      tests: ['tmp']
+      before_test: ['tmp'],
+      after_test: ['test/fixtures']
+    },
+
+    copy: {
+      backup: {
+        files: [
+          {
+            expand: true,
+            cwd: 'test/fixtures',
+            src: '**/*.js',
+            dest: 'tmp'
+          }
+        ]
+      },
+      recover: {
+        files: [
+          {
+            expand: true,
+            cwd: 'tmp',
+            src: '**/*.js',
+            dest: 'test/fixtures'
+          }
+        ]
+      }
     },
 
     // Configuration to be run (and then tested).
@@ -75,144 +99,111 @@ module.exports = function(grunt) {
             dest: 'test/fixtures/append_md5/dest'
           }
         ]
+      },
+      map_query: {
+        options: {
+          configFile: 'test/fixtures/map_query/config.js',
+          base: 'test/fixtures/map_query/src',
+          debug: true
+        },
+        files: [
+          {
+            expand: true,
+            cwd: 'test/fixtures/map_query/src',
+            src: '**/*.js'
+          }
+        ]
+      },
+      map_append: {
+        options: {
+          configFile: 'test/fixtures/map_append/config.js',
+          base: 'test/fixtures/map_append/dest',
+          type: 'md5',
+          position: 'append',
+          debug: true
+        },
+        files: [
+          {
+            expand: true,
+            cwd: 'test/fixtures/map_append/src',
+            src: '**/*.js',
+            dest: 'test/fixtures/map_append/dest'
+          }
+        ]
+      },
+      paths_query: {
+        options: {
+          configFile: 'test/fixtures/paths_query/config.js',
+          base: 'test/fixtures/paths_query/src',
+          paths: {
+            'gallery': 'test/fixtures/paths_query/src/libs'
+          },
+          debug: true
+        },
+        files: [
+          {
+            expand: true,
+            cwd: 'test/fixtures/paths_query/src',
+            src: '**/*.js'
+          }
+        ]
+      },
+      paths_append: {
+        options: {
+          configFile: 'test/fixtures/paths_append/config.js',
+          base: 'test/fixtures/paths_append/dest',
+          paths: {
+            'gallery': 'test/fixtures/paths_append/dest/libs'
+          },
+          type: 'md5',
+          position: 'append',
+          debug: true
+        },
+        files: [
+          {
+            expand: true,
+            cwd: 'test/fixtures/paths_append/src',
+            src: '**/*.js',
+            dest: 'test/fixtures/paths_append/dest'
+          }
+        ]
+      },
+      vars_query: {
+        options: {
+          configFile: 'test/fixtures/vars_query/config.js',
+          base: 'test/fixtures/vars_query/src',
+          vars: {
+            gallery: 'test/fixtures/vars_query/src/libs/'
+          },
+          debug: true
+        },
+        files: [
+          {
+            expand: true,
+            cwd: 'test/fixtures/vars_query/src',
+            src: '**/*.js'
+          }
+        ]
+      },
+      vars_append: {
+        options: {
+          configFile: 'test/fixtures/vars_append/config.js',
+          base: 'test/fixtures/vars_append/dest',
+          vars: {
+            gallery: 'test/fixtures/vars_append/dest/libs/'
+          },
+          position: 'append',
+          debug: true
+        },
+        files: [
+          {
+            expand: true,
+            cwd: 'test/fixtures/vars_append/src',
+            src: '**/*.js',
+            dest: 'test/fixtures/vars_append/dest'
+          }
+        ]
       }
-      // map_query: {
-      //   options: {
-      //     configFile: 'test/fixtures/map_query/config.js',
-      //     base: 'test/fixtures/map_query/src',
-      //     debug: true
-      //   },
-      //   files: [
-      //     {
-      //       expand: true,
-      //       cwd: 'test/fixtures/map_query/src',
-      //       src: '**/*.js'
-      //     }
-      //   ]
-      // },
-      // map_append: {
-      //   options: {
-      //     configFile: 'test/fixtures/map_append/config.js',
-      //     base: 'test/fixtures/map_append/dest',
-      //     type: 'md5',
-      //     position: 'append',
-      //     debug: true
-      //   },
-      //   files: [
-      //     {
-      //       expand: true,
-      //       cwd: 'test/fixtures/map_append/src',
-      //       src: '**/*.js',
-      //       dest: 'test/fixtures/map_append/dest'
-      //     }
-      //   ]
-      // },
-      // paths_query: {
-      //   options: {
-      //     configFile: 'test/fixtures/paths_query/config.js',
-      //     base: 'test/fixtures/paths_query/src',
-      //     paths: {
-      //       'gallery': 'test/fixtures/paths_query/src/libs'
-      //     },
-      //     debug: true
-      //   },
-      //   files: [
-      //     {
-      //       expand: true,
-      //       cwd: 'test/fixtures/paths_query/src',
-      //       src: '**/*.js'
-      //     }
-      // },
-      // paths_append: {
-      //   options: {
-      //     configFile: 'test/fixtures/paths_append/config.js',
-      //     base: 'test/fixtures/paths_append/dest',
-      //     paths: {
-      //       'gallery': 'test/fixtures/paths_append/src/libs'
-      //     },
-      //     type: 'md5',
-      //     position: 'append',
-      //     debug: true
-      //   },
-      //   files: [
-      //     {
-      //       expand: true,
-      //       cwd: 'test/fixtures/paths_append/src',
-      //       src: '**/*.js',
-      //       dest: 'test/fixtures/paths_append/dest'
-      //     }
-      //   ]
-      // },
-      // vars_query: {
-      //   options: {
-      //     configFile: 'test/fixtures/vars_query/config.js',
-      //     base: 'test/fixtures/vars_query/src',
-      //     vars: {},
-      //     debug: true
-      //   },
-      //   files: [
-      //     {
-      //       expand: true,
-      //       cwd: 'test/fixtures/vars_query/src',
-      //       src: '**/*.js'
-      //     }
-      //   ]
-      // },
-      // vars_append: {
-      //   options: {
-      //     configFile: 'test/fixtures/vars_append/config.js'
-      //     base: 'test/fixtures/vars_append/dest',
-      //     vars: {},
-      //     position: 'append',
-      //     debug: true
-      //   },
-      //   files: [
-      //     {
-      //       expand: true,
-      //       cwd: 'test/fixtures/vars_append/src',
-      //       src: '**/*.js',
-      //       dest: 'test/fixtures/vars_append/dest'
-      //     }
-      //   ]
-      // },
-      // paths_vars_query: {
-      //   options: {
-      //     configFile: 'test/fixtures/paths_vars_query/config.js',
-      //     base: 'test/fixtures/paths_vars_query/src',
-      //     paths: {
-      //     },
-      //     vars: {
-      //     },
-      //     debug: true
-      //   },
-      //   files: [
-      //     {
-      //       expand: true,
-      //       cwd: 'test/fixtures/paths_vars_query/src',
-      //       src: '**/*.js'
-      //     }
-      //   ]
-      // },
-      // paths_vars_append: {
-      //   options: {
-      //     configFile: 'test/fixtures/paths_vars_append/config.js',
-      //     base: 'test/fixtures/paths_vars_append/dest',
-      //     paths: {
-      //     },
-      //     vars: {
-      //     },
-      //     position: 'append',
-      //     debug: true
-      //   },
-      //   files: [
-      //     {
-      //       expand: true,
-      //       cwd: 'test/fixtures/paths_vars_append/src',
-      //       src: '**/*.js',
-      //       dest: 'test/fixtures/paths_vars_append/dest'
-      //     }
-      //   ]
-      // }
     },
 
     // Unit tests.
@@ -233,7 +224,7 @@ module.exports = function(grunt) {
 
   // Whenever the "test" task is run, first clean the "tmp" dir, then run this
   // plugin's task(s), then test the result.
-  grunt.registerTask('test', ['clean', 'seajs_fresh']);
+  grunt.registerTask('test', ['clean:before_test', 'copy:backup', 'seajs_fresh', 'clean:after_test', 'copy:recover']);
 
   // By default, lint and run all tests.
   grunt.registerTask('default', ['jshint', 'test']);
