@@ -4,8 +4,7 @@ seajs.config({
 
     /*fresh start*/
     alias: {
-        'foo': 'foo.js?v=1411892362238',
-        'bar': 'bar.js?v=1411892363910'
+        'foo': 'foo.js?v=b2a17edb32',
     }
     /*fresh end*/
 });
