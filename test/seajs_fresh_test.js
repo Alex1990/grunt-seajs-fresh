@@ -38,10 +38,10 @@ exports.seajs_fresh = {
     var blockRe = /\/\*fresh start\*\/[^]*?\/\*fresh end\*\//g;
     var fileRe = /([:,]\s*?['"])(.*?)(['"][^,\]\}]*?[,\]\}])/g;
 
-    testDirs.forEach(function(testDir) {
-      var originConfig = grunt.file.read('test/origin/' + testdir + '/config.js');
+    testDirs.forEach(function(dir) {
+      var originConfig = grunt.file.read('test/origin/' + dir + '/config.js');
       var originBlocks = originConfig.match(blockRe);
-      var originStrs = blocks.map(function(block) {
+      var originStrs = originBlocks.map(function(block) {
         var m, arr = [];
         while (m = fileRe.exec(block)) {
           arr.push(m[2]);
@@ -49,7 +49,7 @@ exports.seajs_fresh = {
         return arr;
       });
 
-      var config = grunt.file.read('test/fixtures/' + testDir + '/config.js');
+      var config = grunt.file.read('test/fixtures/' + dir + '/config.js');
       var blocks = config.match(blockRe);
       var strs = blocks.map(function(block) {
         var m, arr = [];
@@ -62,7 +62,7 @@ exports.seajs_fresh = {
 
       originStrs.forEach(function(v, i) {
         v.forEach(function(vv, j) {
-          test.notEqual(vv, strs[i][j], 'Should not be equal');
+          test.notEqual(vv, strs[i][j], vv + ' Should not be equal to ' + strs[i][j]);
         });
       });
     });

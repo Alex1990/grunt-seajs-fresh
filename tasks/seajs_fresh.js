@@ -127,7 +127,7 @@ module.exports = function(grunt) {
           file = file.lastIndexOf(';;') > -1 ?
                   file.replace(';;', ';') :
                   file + ';';
-          grunt.file.write(filepath);
+          grunt.file.write(filepath, file);
         }
 
         // All changed files will be filtered in
