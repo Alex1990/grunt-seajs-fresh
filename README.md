@@ -37,48 +37,85 @@ grunt.initConfig({
 
 ### Options
 
-#### options.separator
+#### options.configFile
 Type: `String`
-Default value: `',  '`
+Default value: `null`
 
-A string value that is used to do something with whatever.
+The seajs config file path relative to `Gruntfile.js`.
 
-#### options.punctuation
+#### options.base
 Type: `String`
-Default value: `'.'`
+Default value: `''`
 
-A string value that is used to do something else with whatever else.
+Similar to the `base` in seajs config, but relative to `Gruntfile.js`.
+
+#### options.position
+Type: `String`
+Default value: `'query'`
+
+Only two valid values: `'query'` and `'append'`.
+The former represents the string is inserted as a query parameter value (`?v=20140930163555`),
+And the latter represents the string is appended to the filename, not including extname (`filename.93ja4dk3ji.js`).
+
+#### options.type
+Type: `String` or `Function`
+Default value: `'timestamp'`
+
+The type of the string inserted into the file url. The valid values: `'timestramp'`, `'datetime'` or hash algorithms supported by nodejs, such as md5 and sha1.
+
+If this is a function, it accepts an argument representing the `src` filepath 
+and the returned value will be inserted into the file url.
+
+#### options.length
+Type: `Number`
+Default value: `10`
+
+An integer represents the length of the inserted string. Only if the `options.type` is a hash algorithm, it works.
+
+#### options.paths
+Type: `Object`
+Default value: `null`
+
+Similar to the `paths` in seajs config, but relative to `Gruntfile.js`.
+
+#### options.vars
+Type: `Object`
+Default value: `null`
+
+Similar to the `vars` in seajs config, but relative to `Gruntfile.js`.
+The reason why have this option is that some people use it as `paths`.
+
+#### options.blockRe
+Type: `RegExp`
+Default value: `/\/\*fresh start\*\/[^]*?\/\*fresh end\*\//g`
+
+Used to match all blocks in seajs config.
+
+#### options.fileRe
+Type: `RegExp`
+Default value: `/([:,]\s*?['"])(.*?)(['"][^,\]\}]*?[,\]\}])/g`
+
+Used to replace the file url with new file url in seajs config.
 
 ### Usage Examples
 
-#### Default Options
-In this example, the default options are used to do something with whatever. So if the `testing` file has the content `Testing` and the `123` file had the content `1 2 3`, the generated result would be `Testing, 1 2 3.`
-
-```js
-grunt.initConfig({
-  seajs_fresh: {
-    options: {},
-    files: {
-      'dest/default_options': ['src/testing', 'src/123'],
-    },
-  },
-});
-```
-
-#### Custom Options
-In this example, custom options are used to do something else with whatever else. So if the `testing` file has the content `Testing` and the `123` file had the content `1 2 3`, the generated result in this case would be `Testing: 1 2 3 !!!`
+#### Basic Options
 
 ```js
 grunt.initConfig({
   seajs_fresh: {
     options: {
-      separator: ': ',
-      punctuation: ' !!!',
+      configFile: 'js/config.js',
+      base: 'js/dist'
     },
-    files: {
-      'dest/default_options': ['src/testing', 'src/123'],
-    },
-  },
+    files: [
+      {
+        expand: true,
+        cwd: 'js/dist',
+        src: '**/*.js'
+      }
+    ]
+  }
 });
 ```
 
@@ -86,4 +123,3 @@ grunt.initConfig({
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
 
 ## Release History
-_(Nothing yet)_
