@@ -120,16 +120,19 @@ module.exports = function(grunt) {
         }
       })
       .filter(function(filepath) {
-        // All changed files
-        var mtime = fs.statSync(filepath).mtime.getTime();
+
+        // For test
         if (options.debug) {
-          if (map[filepath] && map[filepath].length) {
-            map[filepath][0] = mtime;
-          } else {
-            map[filepath] = [mtime];
-          }
-          return true;
-        } else if (typeof map[filepath] === 'undefined') {
+          var file = grunt.file.read(filepath);
+          file = file.lastIndexOf(';;') > -1 ?
+                  file.replace(';;', ';') :
+                  file + ';';
+          grunt.file.write(filepath);
+        }
+
+        // All changed files will be filtered in
+        var mtime = fs.statSync(filepath).mtime.getTime();
+        if (typeof map[filepath] === 'undefined') {
           map[filepath] = [mtime];
           return true;
         } else if (mtime > map[filepath][0]) {

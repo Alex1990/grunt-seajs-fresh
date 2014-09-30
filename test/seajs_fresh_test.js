@@ -1,7 +1,8 @@
 'use strict';
 
 var grunt = require('grunt');
-
+var fs = require('fs');
+var path = require('path');
 /*
   ======== A Handy Little Nodeunit Reference ========
   https://github.com/caolan/nodeunit
@@ -21,24 +22,50 @@ var grunt = require('grunt');
     test.doesNotThrow(block, [error], [message])
     test.ifError(value)
 */
+function getDirs(parent) {
+  return fs.readdirSync(parent).filter(function(v) {
+    if (fs.statSync(path.join(parent, v)).isDirectory()) {
+      return true;
+    } else {
+      return false;
+    }
+  });
+}
 
 exports.seajs_fresh = {
-  default_options: function(test) {
-    test.expect(1);
+  all: function(test) {
+    var testDirs = getDirs('test/origin/');
+    var blockRe = /\/\*fresh start\*\/[^]*?\/\*fresh end\*\//g;
+    var fileRe = /([:,]\s*?['"])(.*?)(['"][^,\]\}]*?[,\]\}])/g;
 
-    var actual = grunt.file.read('tmp/default_options');
-    var expected = grunt.file.read('test/expected/default_options');
-    test.equal(actual, expected, 'should describe what the default behavior is.');
+    testDirs.forEach(function(testDir) {
+      var originConfig = grunt.file.read('test/origin/' + testdir + '/config.js');
+      var originBlocks = originConfig.match(blockRe);
+      var originStrs = blocks.map(function(block) {
+        var m, arr = [];
+        while (m = fileRe.exec(block)) {
+          arr.push(m[2]);
+        }
+        return arr;
+      });
 
+      var config = grunt.file.read('test/fixtures/' + testDir + '/config.js');
+      var blocks = config.match(blockRe);
+      var strs = blocks.map(function(block) {
+        var m, arr = [];
+        fileRe.lastIndex = 0;
+        while (m = fileRe.exec(block)) {
+          arr.push(m[2]);
+        }
+        return arr;
+      });
+
+      originStrs.forEach(function(v, i) {
+        v.forEach(function(vv, j) {
+          test.notEqual(vv, strs[i][j], 'Should not be equal');
+        });
+      });
+    });
     test.done();
-  },
-  custom_options: function(test) {
-    test.expect(1);
-
-    var actual = grunt.file.read('tmp/custom_options');
-    var expected = grunt.file.read('test/expected/custom_options');
-    test.equal(actual, expected, 'should describe what the custom option(s) behavior is.');
-
-    test.done();
-  },
+  }
 };

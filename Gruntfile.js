@@ -25,27 +25,16 @@ module.exports = function(grunt) {
 
     // Before generating any new files, remove any previously-created files.
     clean: {
-      before_test: ['tmp'],
-      after_test: ['test/fixtures']
+      before_test: ['tmp', 'test/fixtures']
     },
 
     copy: {
-      backup: {
+      test: {
         files: [
           {
             expand: true,
-            cwd: 'test/fixtures',
-            src: '**/*.js',
-            dest: 'tmp'
-          }
-        ]
-      },
-      recover: {
-        files: [
-          {
-            expand: true,
-            cwd: 'tmp',
-            src: '**/*.js',
+            cwd: 'test/origin',
+            src: '**/*.js'
             dest: 'test/fixtures'
           }
         ]
@@ -224,7 +213,7 @@ module.exports = function(grunt) {
 
   // Whenever the "test" task is run, first clean the "tmp" dir, then run this
   // plugin's task(s), then test the result.
-  grunt.registerTask('test', ['clean:before_test', 'copy:backup', 'seajs_fresh', 'clean:after_test', 'copy:recover']);
+  grunt.registerTask('test', ['clean', 'copy', 'seajs_fresh', 'nodeunit']);
 
   // By default, lint and run all tests.
   grunt.registerTask('default', ['jshint', 'test']);
